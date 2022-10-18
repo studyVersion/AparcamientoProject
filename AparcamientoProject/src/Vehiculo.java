@@ -3,14 +3,15 @@ import java.util.Date;
 public abstract class Vehiculo {
 
 	protected int matricula;
-	protected int tiempoEstacionado;
+	//protected int tiempoEstacionado;
+	protected int[] estancia;
 	protected Date entrada;
 	protected Date salida;
 	// protected double cantidadPagar;
 
 	public Vehiculo(int matricula) {
 		this.matricula = matricula;
-		this.tiempoEstacionado = 0;
+		this.estancia = new int [2];
 		this.entrada = new Date();
 		this.salida = null;
 	}
