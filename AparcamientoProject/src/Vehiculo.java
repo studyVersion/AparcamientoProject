@@ -1,19 +1,19 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public abstract class Vehiculo {
 
 	protected int matricula;
-	//protected int tiempoEstacionado;
-	protected int[] estancia;
 	protected Date entrada;
 	protected Date salida;
-	// protected double cantidadPagar;
-
+	protected  boolean aparcado;
+	
 	public Vehiculo(int matricula) {
 		this.matricula = matricula;
-		this.estancia = new int [2];
-		this.entrada = new Date();
+		this.entrada = null;
 		this.salida = null;
+		this.aparcado = false;
 	}
 
 	public int getMatricula() {
@@ -22,14 +22,6 @@ public abstract class Vehiculo {
 
 	public void setMatricula(int matricula) {
 		this.matricula = matricula;
-	}
-
-	public int getTiempoEstacionado() {
-		return tiempoEstacionado;
-	}
-
-	public void setTiempoEstacionado(int tiempoEstacionado) {
-		this.tiempoEstacionado = tiempoEstacionado;
 	}
 
 	public Date getEntrada() {
@@ -47,4 +39,41 @@ public abstract class Vehiculo {
 	public void setSalida(Date salida) {
 		this.salida = salida;
 	}
+
+	public boolean isAparcado() {
+		return aparcado;
+	}
+
+	public void setAparcado(boolean aparcado) {
+		this.aparcado = aparcado;
+	}
+    
+	// Generar fecha entrada
+	public Date fechaEntrada(String fecha) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		try {
+			entrada = sdf.parse(fecha);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return entrada;
+	}
+	
+	
+	// Generar fecha salida
+	public Date fechaSalida(String fecha) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		try {
+			entrada = sdf.parse(fecha);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return salida;
+	}
+	
+	
+	
+	
+	
+
 }
