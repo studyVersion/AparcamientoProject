@@ -25,6 +25,7 @@ public abstract class Vehiculo {
 	}
 
 	public Date getEntrada() {
+		
 		return entrada;
 	}
 
@@ -70,10 +71,5 @@ public abstract class Vehiculo {
 		}
 		return salida;
 	}
-	
-	
-	
-	
-	
 
 }

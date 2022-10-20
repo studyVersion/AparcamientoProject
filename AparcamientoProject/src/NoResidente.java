@@ -7,7 +7,7 @@ public class NoResidente extends Vehiculo {
 
 	public NoResidente(int matricula) {
 		super(matricula);
-
+        this.importe = 0;
 	}
 
 	public double generarImporte(Date entrada, Date salida) {
@@ -20,5 +20,18 @@ public class NoResidente extends Vehiculo {
 		
 		return importe;
 
+	}
+
+	public double getImporte() {
+		return importe;
+	}
+
+	public void setImporte(double importe) {
+		this.importe = importe;
+	}
+
+	@Override
+	public String toString() {
+		return  "Entrada: " + getEntrada() + ", Salida: "+ getSalida() +"Importe: " + importe + "€" ;
 	}
 }

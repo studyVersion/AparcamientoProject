@@ -8,19 +8,19 @@ public class Oficial extends Vehiculo {
 	private Map<Integer, Date[]> listaEstancia = new HashMap<>();
 	private Date[] estancia;
 
-	public Oficial(int matricula, Map<Integer, Date[]> listaEntradas, Date[] estancia) {
+	public Oficial(int matricula) {
 		super(matricula);
 		this.listaEstancia = new HashMap<>();
 		this.estancia = new Date[2];
 	}
 
     
-	public short asociarEstancia(int matricula, Date entrada, Date salida) {
-		short codigo = 0;
+	public void asociarEstancia(int matricula, Date entrada, Date salida) {
+		//short codigo = 0;
 		estancia[0] = entrada;
 		estancia[1] = salida;
 		listaEstancia.put(matricula, estancia);
-		return codigo;
+		//return codigo;
 
 	}
 

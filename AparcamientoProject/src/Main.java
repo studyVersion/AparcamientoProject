@@ -6,39 +6,61 @@ import java.util.Map.Entry;
 
 public class Main {
 	static Scanner sc = new Scanner(System.in);
+
 	public static void menu() {
-		System.out.println("1. Registra entrada");
-		System.out.println("2. Registra salida");
-		System.out.println("3. Da de alta vehículo oficial");
-		System.out.println("4. Da de alta vehículo de residente");
-		System.out.println("5. Comienza mes");
-		System.out.println("6. Pagos de residentes");
+		System.out.println(" _____________________________________");
+		System.out.println("| 1. Registra entrada                 |");
+		System.out.println("| 2. Registra salida                  |");
+		System.out.println("| 3. Da de alta vehículo oficial      |");
+		System.out.println("| 4. Da de alta vehículo de residente |");
+		System.out.println("| 5. Comienza mes                     |");
+		System.out.println("| 6. Pagos de residentes              |");
+		System.out.println("|_____________________________________|");
 	}
-	
+
 	public static void main(String[] args) throws ParseException {
-	
-		Aparcamiento a = new Aparcamiento();
-		int option = 0;
+
+		Aparcamiento parking = new Aparcamiento();
+		short option = 0;
+		short codigo = 0;
 		int matricula = 0;
-		menu();
-		option = Integer.valueOf(sc.nextLine());
-		if (option == 1) {
-			System.out.println( "matricula?");
-			matricula = Integer.valueOf(sc.nextLine());
-			System.out.println("¿Es correcta la matrícula introducida? : "+ matricula +" (y/n)");
-			String op = sc.nextLine().toLowerCase().trim();
-			
-			while(op.equals("n")) {
-				System.out.println( "nueva matricula?");
+
+		while (true) {
+			menu();
+			option = Short.valueOf(sc.nextLine());
+
+			if (option == 1) {
+				System.out.println("Introduzca la matricula del coche que llega:");
 				matricula = Integer.valueOf(sc.nextLine());
-				System.out.println("¿Es correcta la matrícula introducida? : "+ matricula +" (y/n)");
-			    op = sc.nextLine().toLowerCase().trim();
+
+				System.out.println("Es correcta la matricula introducida? : " + matricula + " (y/n)");
+				String respuesta = sc.nextLine().toLowerCase().trim();
+
+				while (respuesta.equals("n")) {
+					System.out.println("Nueva matricula: ");
+					matricula = Integer.valueOf(sc.nextLine());
+					System.out.println("Es correcta la matricula introducida? : " + matricula + " (y/n)");
+					respuesta = sc.nextLine().toLowerCase().trim();
+				}
+				codigo = parking.registrarEntrada(matricula);
+				if (codigo == 0) {
+					System.out.println("Entrada de un vehículo existente en el sistema");
+				} else if (codigo == 1) {
+					System.out.println("Entrada de un vehiculo no residente");
+				} else if (codigo == 2) {
+					System.out.println("Este vehículo ya esta aparcado");
+				}
+				// System.out.println(parking.listaVehiculos.toString());
 			}
-			a.registrarEntrada(matricula);
-			for (Entry<Integer, Vehiculo> vehiculo : a.listaVehiculos.entrySet()) {
-				System.out.println(vehiculo.getValue().isAparcado());
+
+			if (option == 2) {
+				System.out.println("Introduzca la matricula del coche que sale: ");
+				matricula = Integer.valueOf(sc.nextLine());
+				parking.registrarSalida(matricula);
+				if (parking.listaVehiculos.get(matricula) instanceof NoResidente) {
+					System.out.println(parking.getImporte());
+				}
 			}
-			//System.out.println(a.registrarEntrada(matricula));
-			}
+		}
 	}
 }

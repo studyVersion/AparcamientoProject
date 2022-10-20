@@ -7,7 +7,7 @@ public class Residente extends Vehiculo{
     
 	public Residente(int matricula) {
 		super(matricula);
-		
+		this.tiempoAcumulado = 0;
 	}
     
 	public long sumaDuracionEstancia(Date entrada, Date salida) {
@@ -16,7 +16,16 @@ public class Residente extends Vehiculo{
 		
 		tiempoAcumulado += TimeUnit.MILLISECONDS.toSeconds(diferenciaTiempos);
 		
+		
 		return tiempoAcumulado;
 		
+	}
+
+	public long getTiempoAcumulado() {
+		return tiempoAcumulado;
+	}
+
+	public void setTiempoAcumulado(long tiempoAcumulado) {
+		this.tiempoAcumulado = tiempoAcumulado;
 	}
 }
