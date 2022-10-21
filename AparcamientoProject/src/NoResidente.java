@@ -10,7 +10,7 @@ public class NoResidente extends Vehiculo {
         this.importe = 0;
 	}
 
-	public double generarImporte(Date entrada, Date salida) {
+	public void calcularImporte(Date entrada, Date salida) {
 		
 		long diferenciaTiempos = salida.getTime() - entrada.getTime();
 
@@ -18,7 +18,7 @@ public class NoResidente extends Vehiculo {
 		
 		importe = diferenciaTiempos * 0.02;
 		
-		return importe;
+		//return importe;
 
 	}
 
@@ -32,6 +32,6 @@ public class NoResidente extends Vehiculo {
 
 	@Override
 	public String toString() {
-		return  "Entrada: " + getEntrada() + ", Salida: "+ getSalida() +"Importe: " + importe + "€" ;
+		return  "Entrada: " + entradaString() + " Salida: "+ salidaString() +" Importe: " + importe + " euros" ;
 	}
 }

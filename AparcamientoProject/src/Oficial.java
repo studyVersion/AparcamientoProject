@@ -5,27 +5,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Oficial extends Vehiculo {
-	private Map<Integer, Date[]> listaEstancia = new HashMap<>();
+	
 	private Date[] estancia;
 
 	public Oficial(int matricula) {
 		super(matricula);
-		this.listaEstancia = new HashMap<>();
+		//this.listaEstancia = new HashMap<>();
 		this.estancia = new Date[2];
 	}
 
     
-	public void asociarEstancia(int matricula, Date entrada, Date salida) {
-		//short codigo = 0;
+	/*public void asociarEstancia(Date entrada, Date salida) {
 		estancia[0] = entrada;
 		estancia[1] = salida;
-		listaEstancia.put(matricula, estancia);
-		//return codigo;
 
+	}*/
+
+
+	public Date[] getEstancia() {
+		return estancia;
 	}
 
-
+	public void setEstancia(Date entrada, Date salida) {
+		this.estancia[0] = entrada;
+		this.estancia[1] = salida;
 	
+	}
 	
 
 }

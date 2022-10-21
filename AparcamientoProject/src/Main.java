@@ -56,10 +56,17 @@ public class Main {
 			if (option == 2) {
 				System.out.println("Introduzca la matricula del coche que sale: ");
 				matricula = Integer.valueOf(sc.nextLine());
-				parking.registrarSalida(matricula);
-				if (parking.listaVehiculos.get(matricula) instanceof NoResidente) {
-					System.out.println(parking.getImporte());
-				}
+				codigo = parking.registrarSalida(matricula);
+				 if (codigo == 0) {
+					 System.out.println("La salida se ha completado con exito");
+				 }else if(codigo == 1) {
+					 System.out.println("No se encuentra ningún coche con esta matrícula");
+				 }else if (codigo == 2) {
+					 System.out.println("Este vehículo no está aparcado, acaba de salir");
+				 }else if (codigo == 3) {
+					 System.out.println(parking.generarImporte(matricula));
+				 }
+				
 			}
 		}
 	}

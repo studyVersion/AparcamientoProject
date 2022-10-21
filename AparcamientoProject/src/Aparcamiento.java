@@ -2,17 +2,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class Aparcamiento {
 
 	HashMap<Integer, Vehiculo> listaVehiculos = new HashMap<>();
-	static Date entradaAparcamiento = null;
-	static Date salidaAparcamiento = null;
-	private static double importe= 0;
+	private TreeMap<Integer, Date[]> listaEstancias = new TreeMap<>();
+	
 
 	public Aparcamiento() {
 		this.listaVehiculos = new HashMap<>();
+		this.listaEstancias = new TreeMap<>();
 	}
 
 	// Generar nueva fecha en un String con formato
@@ -24,32 +26,39 @@ public class Aparcamiento {
 
 	}// generarNuevaHora
 
+	public Vehiculo encontrarVehiculo(int matricula) {
+		Vehiculo coche = null;
+		for (Entry<Integer, Vehiculo> vehiculo : listaVehiculos.entrySet()) {
+			if (vehiculo.getKey().equals(matricula)) {
+				coche = vehiculo.getValue();
+			}
+		}
+
+		return coche;
+
+	}
+
 	/*
 	 * Si el código es 0, la entrada ha sido registrada, si el código es 1, no se ha
-	 * encontrado la matrícula entonces no residente, si el código es 2, el vehículo está aparcado.
+	 * encontrado la matrícula entonces no residente, si el código es 2, el vehículo
+	 * está aparcado.
 	 */
 	public short registrarEntrada(int matricula) throws ParseException {
 		short codigo = 0;
-
-		if (!listaVehiculos.containsKey(matricula)) {
+		Vehiculo coche = encontrarVehiculo(matricula);
+		if (coche == null) {
 			NoResidente noResid = new NoResidente(matricula);
 			noResid.setAparcado(true);
-			listaVehiculos.put(matricula, noResid);
 			noResid.setEntrada(new Date());
-			entradaAparcamiento = noResid.getEntrada();
+			listaVehiculos.put(matricula, noResid);
 			codigo = 1;
 
-		} else if (listaVehiculos.get(matricula).isAparcado()) {
+		} else if (coche.isAparcado()) {
 			codigo = 2;
 		} else {
-			for (Entry<Integer, Vehiculo> vehiculo : listaVehiculos.entrySet()) {
-				if (vehiculo.getKey().equals(matricula)) {
-					// entradaAparcamiento = new Date();
-					vehiculo.getValue().setEntrada(new Date());
-					entradaAparcamiento = vehiculo.getValue().getEntrada();
-					vehiculo.getValue().setAparcado(true);
-				}
-			}
+			coche.setEntrada(new Date());
+			coche.setAparcado(true);
+
 		}
 
 		return codigo;
@@ -58,87 +67,84 @@ public class Aparcamiento {
 
 	public short registrarSalida(int matricula) {
 		short codigo = 0;
+		Vehiculo coche = encontrarVehiculo(matricula);
 
-		if (!listaVehiculos.containsKey(matricula)) {
+		if (coche == null) {
 			codigo = 1;
-		} else if (!listaVehiculos.get(matricula).isAparcado()) {
+		} else if (!coche.isAparcado()) {
 			codigo = 2;
 		} else {
-			for (Entry<Integer, Vehiculo> vehiculo : listaVehiculos.entrySet()) {
+			// for (Entry<Integer, Vehiculo> vehiculo : listaVehiculos.entrySet()) {
 
-				if (vehiculo.getKey().equals(matricula)) {
+			// if (vehiculo.getKey().equals(matricula)) {
 
-					vehiculo.getValue().setSalida(new Date());
-					salidaAparcamiento = vehiculo.getValue().getSalida();
+			coche.setSalida(new Date());
+			coche.setAparcado(false);
+			// salidaAparcamiento = vehiculo.getValue().getSalida();
 
-					if (vehiculo.getValue() instanceof Oficial) {
-						Oficial vehiculoOficial = (Oficial) vehiculo.getValue();
-						vehiculoOficial.asociarEstancia(matricula, entradaAparcamiento, salidaAparcamiento);
-						vehiculoOficial.setAparcado(false);
-						break;
+			if (coche instanceof Oficial) {
+				Oficial v_Oficial = (Oficial) coche;
+				// v_Oficial.setAparcado(false);
+				v_Oficial.setEstancia(v_Oficial.getEntrada(), v_Oficial.getSalida());
+				listaEstancias.put(matricula, v_Oficial.getEstancia());
 
-					} else if (vehiculo.getValue() instanceof Residente) {
-						Residente vehiculoResid = (Residente) vehiculo.getValue();
-						vehiculoResid.sumaDuracionEstancia(entradaAparcamiento, salidaAparcamiento);
-						vehiculoResid.setAparcado(false);
-						break;
-					} else {
-						NoResidente vehiculoNoResid = (NoResidente) vehiculo.getValue();
-						importe =  vehiculoNoResid.generarImporte(entradaAparcamiento, salidaAparcamiento);
-						vehiculoNoResid.setAparcado(false);
-						listaVehiculos.remove(matricula);
-						break;
-					}
-				}
+			} else if (coche instanceof Residente) {
+				Residente v_residente = (Residente) coche;
+				// v_residente.setAparcado(false);
+				v_residente.setEstancia(v_residente.getEntrada(), v_residente.getSalida());
+				v_residente.sumaDuracionEstancia(v_residente.getEstancia());
+				listaEstancias.put(matricula, v_residente.getEstancia());
+
+			} else {
+				NoResidente v_NoResidente = (NoResidente) coche;
+				v_NoResidente.calcularImporte(v_NoResidente.getEntrada(), v_NoResidente.getSalida());
+				codigo = 3;
+				// v_noResidente.setAparcado(false);
+
 			}
 		}
+
 		return codigo;
 	}
+
 	
-	public static double getImporte() {
-		return importe;
-	}
-
-	public static void setImporte(double importe) {
-		Aparcamiento.importe = importe;
-	}
-
 	public String generarImporte(int matricula) {
-		
 		String payement = "";
-		if(listaVehiculos.containsKey(matricula)){
-			payement =listaVehiculos.get(matricula).toString();
+		if (listaVehiculos.containsKey(matricula)) {
+			payement = listaVehiculos.get(matricula).toString();
+			listaVehiculos.remove(matricula);
 		}
 		return payement;
-		
-		
+
 	}
-	// si el código es 0 el vehículo ha sido añadido, si el código es -1 el vehículo ya existe.
+
+	// si el código es 0 el vehículo ha sido añadido, si el código es -1 el vehículo
+	// ya existe.
 	public short darAltaOficial(int matricula) {
 		short codigo = 0;
 		if (!listaVehiculos.containsKey(matricula)) {
 			Oficial vehiculo = new Oficial(matricula);
 			listaVehiculos.put(matricula, vehiculo);
-		}else {
+		} else {
 			codigo = -1;
 		}
-		
+
 		return codigo;
-		
-	}//darAltaOficial
-	
-	
-	// si el código es 0 el vehículo ha sido añadido, si el código es -1 el vehículo ya existe.
-		public short darAltaResidente(int matricula) {
-			short codigo = 0;
-			if (!listaVehiculos.containsKey(matricula)) {
-				Residente vehiculo = new Residente(matricula);
-				listaVehiculos.put(matricula, vehiculo);
-			}else {
-				codigo = -1;
-			}
-			
-			return codigo;
+
+	}// darAltaOficial
+
+	// si el código es 0 el vehículo ha sido añadido, si el código es -1 el vehículo
+	// ya existe.
+	public short darAltaResidente(int matricula) {
+		short codigo = 0;
+		if (!listaVehiculos.containsKey(matricula)) {
+			Residente vehiculo = new Residente(matricula);
+			listaVehiculos.put(matricula, vehiculo);
+		} else {
+			codigo = -1;
 		}
+
+		return codigo;
+	}
 
 }

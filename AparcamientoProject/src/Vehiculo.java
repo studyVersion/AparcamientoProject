@@ -20,7 +20,8 @@ public abstract class Vehiculo {
 		return matricula;
 	}
 
-	public void setMatricula(int matricula) {
+	public void setMatricula(int matricula) 
+	{
 		this.matricula = matricula;
 	}
 
@@ -50,25 +51,19 @@ public abstract class Vehiculo {
 	}
     
 	// Generar fecha entrada
-	public Date fechaEntrada(String fecha) {
+	public String entradaString() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		try {
-			entrada = sdf.parse(fecha);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		String entrada = sdf.format(getEntrada());
 		return entrada;
 	}
 	
 	
 	// Generar fecha salida
-	public Date fechaSalida(String fecha) {
+	public String salidaString() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		try {
-			entrada = sdf.parse(fecha);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		
+		String	salida = sdf.format(getSalida());
+		
 		return salida;
 	}
 
