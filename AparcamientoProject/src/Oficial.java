@@ -6,12 +6,12 @@ import java.util.Map;
 
 public class Oficial extends Vehiculo {
 	
-	private Date[] estancia;
+	//private Date[] estancia;
 
 	public Oficial(int matricula) {
 		super(matricula);
 		//this.listaEstancia = new HashMap<>();
-		this.estancia = new Date[2];
+		//this.estancia = new Date[2];
 	}
 
     
@@ -22,15 +22,21 @@ public class Oficial extends Vehiculo {
 	}*/
 
 
-	public Date[] getEstancia() {
-		return estancia;
-	}
-
-	public void setEstancia(Date entrada, Date salida) {
-		this.estancia[0] = entrada;
-		this.estancia[1] = salida;
+//	public Date[] getEstancia() {
+//		return estancia;
+//	}
+//
+//	public void setEstancia(Date entrada, Date salida) {
+//		this.estancia[0] = entrada;
+//		this.estancia[1] = salida;
+//	
+//	}
 	
+	public String toString() {
+//		return  "-------------------------------------------------------------\n"+
+//	            "      Matricula      |      Entrada      |      Salida       \n"+
+//				"-------------------------------------------------------------\n"
+//	            +
+		return getMatricula()+"  "+ entradaString()+ "  "+ salidaString();
 	}
-	
-
 }

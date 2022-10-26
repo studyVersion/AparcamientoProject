@@ -10,7 +10,6 @@ public class Aparcamiento {
 
 	HashMap<Integer, Vehiculo> listaVehiculos = new HashMap<>();
 	private TreeMap<Integer, Date[]> listaEstancias = new TreeMap<>();
-	
 
 	public Aparcamiento() {
 		this.listaVehiculos = new HashMap<>();
@@ -83,21 +82,22 @@ public class Aparcamiento {
 			// salidaAparcamiento = vehiculo.getValue().getSalida();
 
 			if (coche instanceof Oficial) {
-				Oficial v_Oficial = (Oficial) coche;
+				Oficial oficial = (Oficial) coche;
 				// v_Oficial.setAparcado(false);
-				v_Oficial.setEstancia(v_Oficial.getEntrada(), v_Oficial.getSalida());
-				listaEstancias.put(matricula, v_Oficial.getEstancia());
+				oficial.setEstancia(oficial.getEntrada(), oficial.getSalida());
+				listaEstancias.put(matricula, oficial.getEstancia());
 
 			} else if (coche instanceof Residente) {
-				Residente v_residente = (Residente) coche;
+				Residente residente = (Residente) coche;
 				// v_residente.setAparcado(false);
-				v_residente.setEstancia(v_residente.getEntrada(), v_residente.getSalida());
-				v_residente.sumaDuracionEstancia(v_residente.getEstancia());
-				listaEstancias.put(matricula, v_residente.getEstancia());
+				residente.setEstancia(residente.getEntrada(), residente.getSalida());
+				residente.sumaDuracionEstancia(residente.getEstancia());
+				listaEstancias.put(matricula, residente.getEstancia());
 
 			} else {
-				NoResidente v_NoResidente = (NoResidente) coche;
-				v_NoResidente.calcularImporte(v_NoResidente.getEntrada(), v_NoResidente.getSalida());
+				NoResidente noResidente = (NoResidente) coche;
+				noResidente.setEstancia(noResidente.getEntrada(), noResidente.getSalida());
+				noResidente.calcularImporte(noResidente.getEstancia());
 				codigo = 3;
 				// v_noResidente.setAparcado(false);
 
@@ -107,7 +107,6 @@ public class Aparcamiento {
 		return codigo;
 	}
 
-	
 	public String generarImporte(int matricula) {
 		String payement = "";
 		if (listaVehiculos.containsKey(matricula)) {
@@ -145,6 +144,22 @@ public class Aparcamiento {
 		}
 
 		return codigo;
+	}
+
+	public String comienzaMes() {
+		int matricula = 0;
+		String info="";
+		for (Entry<Integer, Date[]> estancia : listaEstancias.entrySet()) {
+			matricula = estancia.getKey();
+			Vehiculo car = encontrarVehiculo(matricula);
+			if (car instanceof Oficial) {
+				info = info + "\n" +car.toString()+"\n";
+				
+			}
+
+		}
+		return info;
+
 	}
 
 }

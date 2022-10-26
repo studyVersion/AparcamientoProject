@@ -8,12 +8,14 @@ public abstract class Vehiculo {
 	protected Date entrada;
 	protected Date salida;
 	protected  boolean aparcado;
+	protected Date[] estancia;
 	
 	public Vehiculo(int matricula) {
 		this.matricula = matricula;
 		this.entrada = null;
 		this.salida = null;
 		this.aparcado = false;
+		this.estancia = new Date[2];
 	}
 
 	public int getMatricula() {
@@ -48,6 +50,15 @@ public abstract class Vehiculo {
 
 	public void setAparcado(boolean aparcado) {
 		this.aparcado = aparcado;
+	}
+	public Date[] getEstancia() {
+		
+		return estancia;
+	}
+
+	public void setEstancia(Date entrada, Date salida) {
+		this.estancia[0] = entrada;
+		this.estancia[1] = salida;	
 	}
     
 	// Generar fecha entrada
