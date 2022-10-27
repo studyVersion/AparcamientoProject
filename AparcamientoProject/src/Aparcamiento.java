@@ -9,7 +9,8 @@ import java.util.TreeMap;
 public class Aparcamiento {
 
 	HashMap<Integer, Vehiculo> listaVehiculos = new HashMap<>();
-	private TreeMap<Integer, Date[]> listaEstancias = new TreeMap<>();
+	private TreeMap<String, Integer> listaEstancias = new TreeMap<>();
+
 
 	public Aparcamiento() {
 		this.listaVehiculos = new HashMap<>();
@@ -79,20 +80,26 @@ public class Aparcamiento {
 
 			coche.setSalida(new Date());
 			coche.setAparcado(false);
+//			String estancia = "\t"+matricula +"\t\t"+ coche.entradaString() + "\t  "+coche.salidaString();
+//			listaEstancias.put(estancia, matricula);
+			
 			// salidaAparcamiento = vehiculo.getValue().getSalida();
 
 			if (coche instanceof Oficial) {
 				Oficial oficial = (Oficial) coche;
-				// v_Oficial.setAparcado(false);
 				oficial.setEstancia(oficial.getEntrada(), oficial.getSalida());
-				listaEstancias.put(matricula, oficial.getEstancia());
+				String estancia = "\t"+matricula +"\t\t"+ oficial.toString();
+				listaEstancias.put(estancia, matricula);
+				//listaEstancias.put(matricula, oficial.getEstancia());
 
 			} else if (coche instanceof Residente) {
 				Residente residente = (Residente) coche;
 				// v_residente.setAparcado(false);
 				residente.setEstancia(residente.getEntrada(), residente.getSalida());
-				residente.sumaDuracionEstancia(residente.getEstancia());
-				listaEstancias.put(matricula, residente.getEstancia());
+				residente.sumaDuracionEstancia();
+				String estancia = "\t"+matricula +"\t\t"+ residente.toString();
+				listaEstancias.put(estancia, matricula);
+				//listaEstancias.put(matricula, residente.getEstancia());
 
 			} else {
 				NoResidente noResidente = (NoResidente) coche;
@@ -147,16 +154,20 @@ public class Aparcamiento {
 	}
 
 	public String comienzaMes() {
+		short codigo = 0;
 		int matricula = 0;
 		String info="";
-		for (Entry<Integer, Date[]> estancia : listaEstancias.entrySet()) {
-			matricula = estancia.getKey();
+		for (Entry<String, Integer> estancia : listaEstancias.entrySet()) {
+			matricula = estancia.getValue();
 			Vehiculo car = encontrarVehiculo(matricula);
+			//estancia.getValue().equals(info)
 			if (car instanceof Oficial) {
-				info = info + "\n" +car.toString()+"\n";
-				
+				info = info + "\n" +estancia.getKey()+"\n";		
+				//codigo = 1;
+			}else if (car instanceof Residente) {
+				info = info + "\n" +estancia.getKey()+"\n";				
+				//codigo = 2;
 			}
-
 		}
 		return info;
 

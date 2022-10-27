@@ -33,10 +33,7 @@ public class Oficial extends Vehiculo {
 //	}
 	
 	public String toString() {
-//		return  "-------------------------------------------------------------\n"+
-//	            "      Matricula      |      Entrada      |      Salida       \n"+
-//				"-------------------------------------------------------------\n"
-//	            +
-		return getMatricula()+"  "+ entradaString()+ "  "+ salidaString();
+		
+		return  entradaString()+ "\t  "+ salidaString();
 	}
 }
