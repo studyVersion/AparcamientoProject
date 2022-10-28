@@ -1,4 +1,3 @@
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -61,7 +60,7 @@ public abstract class Vehiculo {
 		this.estancia[1] = salida;	
 	}
     
-	// Generar fecha entrada
+	// Generar fecha entrada en forma de String
 	public String entradaString() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		String entrada = sdf.format(getEntrada());
@@ -69,7 +68,7 @@ public abstract class Vehiculo {
 	}
 	
 	
-	// Generar fecha salida
+	// Generar fecha salida en forma de String
 	public String salidaString() {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		

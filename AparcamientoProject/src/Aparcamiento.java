@@ -11,7 +11,6 @@ public class Aparcamiento {
 	HashMap<Integer, Vehiculo> listaVehiculos = new HashMap<>();
 	private TreeMap<String, Integer> listaEstancias = new TreeMap<>();
 
-
 	public Aparcamiento() {
 		this.listaVehiculos = new HashMap<>();
 		this.listaEstancias = new TreeMap<>();
@@ -33,11 +32,11 @@ public class Aparcamiento {
 				coche = vehiculo.getValue();
 			}
 		}
-
 		return coche;
 
-	}
+	}// encontrarVehiculo
 
+	
 	/*
 	 * Si el código es 0, la entrada ha sido registrada, si el código es 1, no se ha
 	 * encontrado la matrícula entonces no residente, si el código es 2, el vehículo
@@ -58,11 +57,10 @@ public class Aparcamiento {
 		} else {
 			coche.setEntrada(new Date());
 			coche.setAparcado(true);
-
 		}
-
 		return codigo;
 
+		
 	}// registrarEntrada
 
 	public short registrarSalida(int matricula) {
@@ -74,45 +72,31 @@ public class Aparcamiento {
 		} else if (!coche.isAparcado()) {
 			codigo = 2;
 		} else {
-			// for (Entry<Integer, Vehiculo> vehiculo : listaVehiculos.entrySet()) {
-
-			// if (vehiculo.getKey().equals(matricula)) {
-
 			coche.setSalida(new Date());
 			coche.setAparcado(false);
-//			String estancia = "\t"+matricula +"\t\t"+ coche.entradaString() + "\t  "+coche.salidaString();
-//			listaEstancias.put(estancia, matricula);
-			
-			// salidaAparcamiento = vehiculo.getValue().getSalida();
 
 			if (coche instanceof Oficial) {
 				Oficial oficial = (Oficial) coche;
 				oficial.setEstancia(oficial.getEntrada(), oficial.getSalida());
-				String estancia = "\t"+matricula +"\t\t"+ oficial.toString();
+				String estancia = "\t" + matricula + "\t\t" + oficial.toString();
 				listaEstancias.put(estancia, matricula);
-				//listaEstancias.put(matricula, oficial.getEstancia());
 
 			} else if (coche instanceof Residente) {
 				Residente residente = (Residente) coche;
-				// v_residente.setAparcado(false);
 				residente.setEstancia(residente.getEntrada(), residente.getSalida());
 				residente.sumaDuracionEstancia();
-				String estancia = "\t"+matricula +"\t\t"+ residente.toString();
+				String estancia = "\t" + matricula + "\t\t" + residente.toString();
 				listaEstancias.put(estancia, matricula);
-				//listaEstancias.put(matricula, residente.getEstancia());
-
 			} else {
 				NoResidente noResidente = (NoResidente) coche;
 				noResidente.setEstancia(noResidente.getEntrada(), noResidente.getSalida());
 				noResidente.calcularImporte(noResidente.getEstancia());
 				codigo = 3;
-				// v_noResidente.setAparcado(false);
-
 			}
 		}
 
 		return codigo;
-	}
+	}// registrarSalida
 
 	public String generarImporte(int matricula) {
 		String payement = "";
@@ -122,7 +106,7 @@ public class Aparcamiento {
 		}
 		return payement;
 
-	}
+	}// generarImporte
 
 	// si el código es 0 el vehículo ha sido añadido, si el código es -1 el vehículo
 	// ya existe.
@@ -149,24 +133,20 @@ public class Aparcamiento {
 		} else {
 			codigo = -1;
 		}
-
 		return codigo;
-	}
+
+	}// darAltaResidente
 
 	public String comienzaMes() {
-		short codigo = 0;
 		int matricula = 0;
-		String info="";
+		String info = "";
 		for (Entry<String, Integer> estancia : listaEstancias.entrySet()) {
 			matricula = estancia.getValue();
 			Vehiculo car = encontrarVehiculo(matricula);
-			//estancia.getValue().equals(info)
 			if (car instanceof Oficial) {
-				info = info + "\n" +estancia.getKey()+"\n";		
-				//codigo = 1;
-			}else if (car instanceof Residente) {
-				info = info + "\n" +estancia.getKey()+"\n";				
-				//codigo = 2;
+				info = info + "\n" + estancia.getKey() + "\n";
+			} else if (car instanceof Residente) {
+				info = info + "\n" + estancia.getKey() + "\n";
 			}
 		}
 		return info;

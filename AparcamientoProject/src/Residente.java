@@ -36,9 +36,9 @@ public class Residente extends Vehiculo {
 	public void setTiempoAcumulado(long tiempoAcumulado) {
 		this.tiempoAcumulado = tiempoAcumulado;
 	}
-
+    
 	public String toString() {
 
-		return entradaString() + "\t  " + salidaString() +"\t  " + tiempoEstancia() + "\t  " + tiempoAcumulado;
+		return "Residente\t  "+entradaString() + "\t    " + salidaString() +"\t\t     " + tiempoEstancia() + "\t\t\t  " + tiempoAcumulado;
 	}
 }
