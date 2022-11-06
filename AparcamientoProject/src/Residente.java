@@ -4,10 +4,13 @@ import java.util.concurrent.TimeUnit;
 public class Residente extends Vehiculo {
 
 	private long tiempoAcumulado;
+	private double pagoResidente;
 
 	public Residente(int matricula) {
 		super(matricula);
 		this.tiempoAcumulado = 0;
+		this.pagoResidente = 0;
+		
 
 	}
 
@@ -19,6 +22,10 @@ public class Residente extends Vehiculo {
 
 		 return tiempoAcumulado;
 
+	}
+	public double getPagoResidente() {
+		this.pagoResidente = tiempoAcumulado * 0.002;
+		return pagoResidente;
 	}
 	
 	public long tiempoEstancia() {

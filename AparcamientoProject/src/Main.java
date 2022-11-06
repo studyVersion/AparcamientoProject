@@ -1,7 +1,19 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Scanner;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import java.util.Map.Entry;
 
 public class Main {
@@ -18,7 +30,7 @@ public class Main {
 		System.out.println("|_____________________________________|");
 	}
 
-	public static void main(String[] args) throws ParseException{
+	public static void main(String[] args) throws ParseException, IOException, ParserConfigurationException, TransformerException {
 
 		Aparcamiento parking = new Aparcamiento();
 		short option = 0;
@@ -57,45 +69,66 @@ public class Main {
 				System.out.println("Introduzca la matricula del coche que sale: ");
 				matricula = Integer.valueOf(sc.nextLine());
 				mensajeConsola = parking.registrarSalida(matricula);
-				 if (mensajeConsola == 0) {
-					 System.out.println("La salida se ha completado con exito");
-				 }else if(mensajeConsola == 1) {
-					 System.out.println("No se encuentra ningun coche con esta matrícula");
-				 }else if (mensajeConsola == 2) {
-					 System.out.println("Este vehiculo no esta aparcado.");
-				 }else if (mensajeConsola == 3) {
-					 System.out.println(parking.generarImporte(matricula));
-				 }
-				
+				if (mensajeConsola == 0) {
+					System.out.println("La salida se ha completado con exito");
+				} else if (mensajeConsola == 1) {
+					System.out.println("No se encuentra ningun coche con esta matrícula");
+				} else if (mensajeConsola == 2) {
+					System.out.println("Este vehiculo no esta aparcado.");
+				} else if (mensajeConsola == 3) {
+					System.out.println(parking.generarImporte(matricula));
+				}
+
 			}
-			
+
 			if (option == 3) {
 				System.out.println("Introduzca la matricula del coche oficial a anadir:");
 				matricula = Integer.valueOf(sc.nextLine());
 				mensajeConsola = parking.darAltaOficial(matricula);
 				if (mensajeConsola < 0) {
 					System.out.println("Este vehiculo ya esta registrado, pruebe con otra matricula.");
-				}else {
-					System.out.println("El vehiculo esta registrado con exito");
+				} else {
+					System.out.println("Vehiculo oficial registrado con exito");
 				}
 			}
-			
+
 			if (option == 4) {
 				System.out.println("Introduzca la matricula del coche residente a anadir:");
 				matricula = Integer.valueOf(sc.nextLine());
 				mensajeConsola = parking.darAltaResidente(matricula);
 				if (mensajeConsola < 0) {
 					System.out.println("Este vehiculo ya esta registrado, pruebe con otra matricula.");
-				}else {
-					System.out.println("El vehiculo esta registrado con exito");
+				} else {
+					System.out.println("Vehiculo Residente registrado con exito");
 				}
 			}
 			if (option == 5) {
-				System.out.println("---------------------+----------------+-------------------------+-------------------------+---------------------+------------------\n"+
-                  	               "      Matricula      |      Tipo      |         Entrada         |         Salida          |   Tiempo Estancia   |   Tiempo Total   \n"+
-				                   "---------------------+----------------+-------------------------+-------------------------+---------------------+------------------\n");
+				System.out.println(
+						"---------------------+----------------+-------------------------+-------------------------+---------------------+------------------\n"
+								+ "      Matricula      |      Tipo      |         Entrada         |         Salida          |   Tiempo Estancia   |   Tiempo Total   \n"
+								+ "---------------------+----------------+-------------------------+-------------------------+---------------------+------------------");
 				System.out.println(parking.comienzaMes());
 			}
+			if (option == 6) {
+				try (BufferedWriter bw = new BufferedWriter(new FileWriter(new File("output.txt")))) {
+					bw.write( "---------------------+---------------------------+----------------------+\n"
+							+ "      Matricula      | Tiempo estacionado (min.) |   Cantidad a pagar   |\n"
+							+ "---------------------+---------------------------+----------------------+\n"
+							+ parking.pagosResidentes());
+
+					bw.close();
+				} catch (FileNotFoundException ex) {
+					System.out.println(ex.toString());
+				}
+				System.out.println("---------------------+---------------------------+----------------------+\n"
+					             + "      Matricula      | Tiempo estacionado (min.) |   Cantidad a pagar   |\n"
+						         + "---------------------+---------------------------+----------------------+");
+				System.out.println(parking.pagosResidentes());
+			}
+			if(option == 7) {
+				parking.recuperarFechajes();
+			}
+			
 		}
 	}
 }
