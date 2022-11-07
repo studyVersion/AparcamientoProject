@@ -25,12 +25,11 @@ import java.util.TreeMap;
 public class Aparcamiento {
 
 	private HashMap<Integer, Vehiculo> listaVehiculos = new HashMap<>();
-	// private TreeMap<String, Integer> listaEstancias = new TreeMap<>();
-	private TreeMap<Date[], Integer> lista = new TreeMap<>();
+	private Map<Date[], Integer> listaEstancias = new HashMap<>();
 
 	public Aparcamiento() {
 		this.listaVehiculos = new HashMap<>();
-		this.lista = new TreeMap<>();
+		this.listaEstancias = new HashMap<>();
 	}
 
 	// Generar nueva fecha en un String con formato
@@ -90,23 +89,14 @@ public class Aparcamiento {
 			coche.setSalida(new Date());
 			coche.setAparcado(false);
 			coche.setEstancia(coche.getEntrada(), coche.getSalida());
-			lista.put(coche.getEstancia(), matricula);
-			// if (coche instanceof Oficial) {
-			// Oficial oficial = (Oficial) coche;
-			// oficial.setEstancia(oficial.getEntrada(), oficial.getSalida());
-			// String estancia = "\t" + matricula + "\t\t" + oficial.toString();
-			// listaEstancias.put(estancia, matricula);
+			Date[] estancia = { coche.getEntrada(), coche.getSalida() };
+			listaEstancias.put(estancia, matricula);
 
-			// }
 			if (coche instanceof Residente) {
 				Residente residente = (Residente) coche;
-				// residente.setEstancia(residente.getEntrada(), residente.getSalida());
 				residente.sumaDuracionEstancia();
-				// String estancia = "\t" + matricula + "\t\t" + residente.toString();
-				// listaEstancias.put(estancia, matricula);
 			} else if (coche instanceof NoResidente) {
 				NoResidente noResidente = (NoResidente) coche;
-				// noResidente.setEstancia(noResidente.getEntrada(), noResidente.getSalida());
 				noResidente.calcularImporte(noResidente.getEstancia());
 				codigo = 3;
 			}
@@ -156,18 +146,22 @@ public class Aparcamiento {
 
 	public String comienzaMes() {
 		int matricula = 0;
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		String info = "";
-		for (Entry<Date[], Integer> estancia : lista.entrySet()) {
+		for (Entry<Date[], Integer> estancia : listaEstancias.entrySet()) {
 			matricula = estancia.getValue();
 			Vehiculo car = encontrarVehiculo(matricula);
+			String entrada = sdf.format(estancia.getKey()[0]);
+			String salida = sdf.format(estancia.getKey()[1]);
+
 			if (car instanceof Oficial) {
-				info = "\t" + matricula + "\t\t" + car.toString() + "\n\n" + info;
+				info = car.toString() + "\t\t" + entrada + "\t\s\s\s" + salida + "\n\n" + info;
 			} else if (car instanceof Residente) {
-				info = "\t" + matricula + "\t\t" + car.toString() + "\n\n" + info;
+				info = car.toString() + "\t\t" + entrada + "\t\s\s\s" + salida + "\n\n" + info;
 				((Residente) car).setTiempoAcumulado(0);
 			}
 		}
-		lista.clear();
+		listaEstancias.clear();
 		return info;
 
 	}
@@ -196,31 +190,32 @@ public class Aparcamiento {
 		Element root = doc.createElement("Entradas-salidas");
 		doc.appendChild(root);
 		for (Entry<Integer, Vehiculo> vehiculo : listaVehiculos.entrySet()) {
-			if (lista.containsValue(vehiculo.getKey())) {
+			if (listaEstancias.containsValue(vehiculo.getKey())) {
 				Element coche = doc.createElement("Vehiculo");
-				// add staff to root
+				// add coche to root
 				root.appendChild(coche);
 				// add xml attribute
 				coche.setAttribute("matricula", vehiculo.getKey().toString());
 
 				Element estancias = doc.createElement("estancias");
 				coche.appendChild(estancias);
-				for (Entry<Date[], Integer> estancia : lista.entrySet()) {
-					SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-					// estancia
-					Element estanciaElement = doc.createElement("estancia");
-					estancias.appendChild(estanciaElement);
+				for (Entry<Date[], Integer> estancia : listaEstancias.entrySet()) {
+					if (estancia.getValue().equals(vehiculo.getKey())) {
+						SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+						// estancia
+						Element estanciaElement = doc.createElement("estancia");
+						estancias.appendChild(estanciaElement);
 
-					// entrada
-					Element entrada = doc.createElement("entrada");
-					entrada.setTextContent(sdf.format(estancia.getKey()[0]));
-					estanciaElement.appendChild(entrada);
+						// entrada
+						Element entrada = doc.createElement("entrada");
+						entrada.setTextContent(sdf.format(estancia.getKey()[0]));
+						estanciaElement.appendChild(entrada);
 
-					// salida
-					Element salida = doc.createElement("salida");
-					salida.setTextContent(sdf.format(estancia.getKey()[1]));
-					estanciaElement.appendChild(salida);
-
+						// salida
+						Element salida = doc.createElement("salida");
+						salida.setTextContent(sdf.format(estancia.getKey()[1]));
+						estanciaElement.appendChild(salida);
+					}
 				}
 			}
 		}

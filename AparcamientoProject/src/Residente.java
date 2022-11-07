@@ -46,6 +46,6 @@ public class Residente extends Vehiculo {
     
 	public String toString() {
 
-		return "Residente\t  "+entradaString() + "\t    " + salidaString() +"\t\t     " + tiempoEstancia() + "\t\t\t  " + tiempoAcumulado;
+		return  "\t"+ getMatricula()+"\t\tResidente"+"\t\t" + tiempoEstancia() + "\t\t\s" + tiempoAcumulado;
 	}
 }

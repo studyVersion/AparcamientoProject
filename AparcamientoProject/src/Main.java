@@ -45,15 +45,6 @@ public class Main {
 				System.out.println("Introduzca la matricula del coche que llega:");
 				matricula = Integer.valueOf(sc.nextLine());
 
-//				System.out.println("Es correcta la matricula introducida: " + matricula + " (S/N)");
-//				String respuesta = sc.nextLine().toLowerCase().trim();
-//
-//				while (respuesta.equals("n")) {
-//					System.out.println("Nueva matricula: ");
-//					matricula = Integer.valueOf(sc.nextLine());
-//					System.out.println("Es correcta la matricula introducida: " + matricula + " (S/N)");
-//					respuesta = sc.nextLine().toLowerCase().trim();
-//				}
 				mensajeConsola = parking.registrarEntrada(matricula);
 				if (mensajeConsola == 0) {
 					System.out.println("Entrada de un vehiculo existente en el sistema");
@@ -62,7 +53,6 @@ public class Main {
 				} else if (mensajeConsola == 2) {
 					System.out.println("Este vehiculo ya esta aparcado");
 				}
-				// System.out.println(parking.listaVehiculos.toString());
 			}
 
 			if (option == 2) {
@@ -103,10 +93,9 @@ public class Main {
 				}
 			}
 			if (option == 5) {
-				System.out.println(
-						"---------------------+----------------+-------------------------+-------------------------+---------------------+------------------\n"
-								+ "      Matricula      |      Tipo      |         Entrada         |         Salida          |   Tiempo Estancia   |   Tiempo Total   \n"
-								+ "---------------------+----------------+-------------------------+-------------------------+---------------------+------------------");
+				System.out.println(	"---------------------+----------------+-------------------+------------------+------------------------+-------------------------+\n"
+								  + "      Matricula      |      Tipo      |  Tiempo Estancia  |   Tiempo Total   |         Entrada        |         Salida          |\n"
+								  + "---------------------+----------------+-------------------+------------------+------------------------+-------------------------+");
 				System.out.println(parking.comienzaMes());
 			}
 			if (option == 6) {
