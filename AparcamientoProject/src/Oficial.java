@@ -15,6 +15,6 @@ public class Oficial extends Vehiculo {
    
 	
 	public String toString() {	
-		return  "\t"+ getMatricula()+"\t\t   Oficial"+ "\s\s\t\t-\t\t\s\s-";
+		return  "\t"+ getMatricula()+"\t\tOficial   "+ "\s\s\t\t-\t\t\s\s-";
 }
 }
