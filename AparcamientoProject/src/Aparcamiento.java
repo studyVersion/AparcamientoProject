@@ -202,7 +202,7 @@ public class Aparcamiento {
 	public void leerXML() throws ParseException, SAXException, IOException, ParserConfigurationException {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		File path = new File("Entradas-salidas.xml");
+		File path = new File("C:\\Users\\2DAM\\git\\AparcamientoProject\\AparcamientoProject\\Entradas-salidas.xml");
 		int matricula = 0;
 		Date entrada = null;
 		Date salida = null;
@@ -225,12 +225,21 @@ public class Aparcamiento {
 				String nodeMatricula = vehiculo.getAttribute("matricula");
 			
 				matricula = Integer.parseInt(nodeMatricula);
+				
+				
+				
+				NodeList estancias = doc.getElementsByTagName("estancias");
+                
+           	    Element element = (Element) estancias.item(i);
+           	    
+           	 if (element.getNodeType() == Node.ELEMENT_NODE) {
    
-				NodeList listEstancias = doc.getElementsByTagName("estancia");
+				Node  listEstancias = (Node) element.getChildNodes();
+				System.out.println(listEstancias.getChildNodes().getLength());
 
-				for (int j = 0; j < listEstancias.getLength(); j++) {
+				for (int j = 0; j < listEstancias.getChildNodes().getLength(); j++) {
 
-					Node nodeEstancia = listEstancias.item(j);
+					Node nodeEstancia = listEstancias.getChildNodes().item(j);
 //                     Node sibling = node2.getNextSibling();
 //                     if(sibling==null) {
 //                		 break;
@@ -248,23 +257,25 @@ public class Aparcamiento {
 						// System.out.println(estancia[0] +" "+ estancia[1]);
 						// Node sibling = node.getNextSibling();
 
-						if (!encontrarEstancia(estanciaDate)) {
-							listaEstancias.put(estanciaDate, matricula);
+//						if (!encontrarEstancia(estanciaDate)) {
+							
+							 
+//	                    	
+//	                    	 NamedNodeMap map = element.getAttributes();
+//	                    	//for (int j = 0; j < map.getLength(); j++) {
+//	                    		 Node attribute = map.item(0);
+//	                    		 if(attribute.getNodeValue().equals(nodeMatricula)) {
+	                    			 if(!encontrarEstancia(estanciaDate) ) {
+	                    				 //matricula = Integer.parseInt(attribute.getNodeValue());
+	                    			 listaEstancias.put(estanciaDate, matricula);               
+	                    
+//	                    			 }
+							
+//							listaEstancias.put(estanciaDate, matricula);
 
 						}
 //                    	
-//                    	 NodeList estancias = doc.getElementsByTagName("estancias");
-//                        
-//                    	 Element element = (Element) estancias.item(temp);
-//                    	
-//                    	 NamedNodeMap map = element.getParentNode().getAttributes();
-//                    	//for (int j = 0; j < map.getLength(); j++) {
-//                    		 Node attribute = map.item(0);
-//                    		 if(attribute.getNodeValue().equals(nodeMatricula)) {
-//                    			 if(!encontrarEstancia(estancia, matricula) ) {
-//                    				 //matricula = Integer.parseInt(attribute.getNodeValue());
-//                    			 listaEstancias.put(estancia, matricula);               
-//                     }}
+					}
 					}
 				}
 
@@ -316,7 +327,7 @@ public class Aparcamiento {
 
 	public void escribirFechajes()
 			throws ParserConfigurationException, TransformerException, SAXException, IOException, ParseException {
-		File path = new File("Entradas-salidas.xml");
+		File path = new File("C:\\Users\\2DAM\\git\\AparcamientoProject\\AparcamientoProject\\Entradas-salidas.xml");
 		DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
 		Document doc = documentBuilder.newDocument();
