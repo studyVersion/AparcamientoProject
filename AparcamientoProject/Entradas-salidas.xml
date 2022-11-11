@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Entradas-salidas>
-    <Vehiculo matricula="123">
+    <Vehiculo matricula="444">
         <estancias>
             <estancia>
-                <entrada>10-11-2022 22:07:53</entrada>
-                <salida>10-11-2022 22:07:54</salida>
-            </estancia>
-            <estancia>
-                <entrada>10-11-2022 22:07:55</entrada>
-                <salida>10-11-2022 22:07:56</salida>
-            </estancia>
-        </estancias>
-    </Vehiculo>
-    <Vehiculo matricula="111">
-        <estancias>
-            <estancia>
-                <entrada>10-11-2022 22:07:58</entrada>
-                <salida>10-11-2022 22:07:59</salida>
+                <entrada>11-11-2022 16:27:32</entrada>
+                <salida>11-11-2022 16:27:37</salida>
             </estancia>
         </estancias>
     </Vehiculo>
