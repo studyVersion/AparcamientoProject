@@ -121,10 +121,10 @@ public class Main {
 					System.out.println(parking.pagosResidentes());
 				}
 				if(option == 9) {
-					parking.readXML();
+					parking.leerXML();
 				}
 				if (option == 7) {
-					parking.recuperarFechajes();
+					parking.escribirFechajes();
 				}
 			} catch (NumberFormatException e) {
 				System.out.println(e);

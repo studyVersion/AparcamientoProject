@@ -18,6 +18,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -25,7 +26,7 @@ import org.xml.sax.SAXException;
 public class Aparcamiento {
 
 	private HashMap<Integer, Vehiculo> listaVehiculos = new HashMap<>();
-	 Map<Date[], Integer> listaEstancias = new HashMap<>();
+	private Map<Date[], Integer> listaEstancias = new HashMap<>();
 
 	public Aparcamiento() {
 		this.listaVehiculos = new HashMap<>();
@@ -137,6 +138,7 @@ public class Aparcamiento {
 		if (!listaVehiculos.containsKey(matricula)) {
 			Residente vehiculo = new Residente(matricula);
 			listaVehiculos.put(matricula, vehiculo);
+			// escribirViculos
 		} else {
 			codigo = -1;
 		}
@@ -168,26 +170,118 @@ public class Aparcamiento {
 
 	public String pagosResidentes() {
 		String value = "";
-	//	Formatter fmt = new Formatter();  
+		// Formatter fmt = new Formatter();
 		for (Entry<Integer, Vehiculo> vehiculo : listaVehiculos.entrySet()) {
 			if (vehiculo.getValue() instanceof Residente) {
 				Residente res = (Residente) vehiculo.getValue();
 //				fmt.format("%12d %25s %30s\n", res.getMatricula(), res.getTiempoAcumulado(), res.getPagoResidente()+" Euros\n");
 //				value = fmt + value;
 				value = "\t" + res.getMatricula() + "\t\t\t" + res.getTiempoAcumulado() + "\t\t\t"
-					+ res.getPagoResidente() + " Euros\n\n" + value;
+						+ res.getPagoResidente() + " Euros\n\n" + value;
 			}
 		}
 		return value;
 
 	}// pagosResidente
-    
-	public void crearXML(Document doc) {
-		
-		
+
+	public boolean encontrarEstancia(Date[] estancia) {
+		boolean existe = false;
+		for (Entry<Date[], Integer> estancias : listaEstancias.entrySet()) {
+
+			if (estancia[0].equals(estancias.getKey()[0]) && estancia[1].equals(estancias.getKey()[1])) {
+				// if(estancias.getValue().equals(mat)) {
+				existe = true;
+			}
+			// }
+
+		}
+		return existe;
+
+	}
+
+	public void leerXML() throws ParseException, SAXException, IOException, ParserConfigurationException {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		File path = new File("Entradas-salidas.xml");
+		int matricula = 0;
+		Date entrada = null;
+		Date salida = null;
+
+		DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+		Document doc = documentBuilder.parse(path);
+		doc.getDocumentElement().normalize();
+
+		NodeList listVehiculos = doc.getElementsByTagName("Vehiculo");
+
+		for (int i = 0; i < listVehiculos.getLength(); i++) {
+
+			Node nodeVehiculo = listVehiculos.item(i);
+
+			if (nodeVehiculo.getNodeType() == Node.ELEMENT_NODE) {
+
+				Element vehiculo = (Element) nodeVehiculo;
+                
+				String nodeMatricula = vehiculo.getAttribute("matricula");
+			
+				matricula = Integer.parseInt(nodeMatricula);
+   
+				NodeList listEstancias = doc.getElementsByTagName("estancia");
+
+				for (int j = 0; j < listEstancias.getLength(); j++) {
+
+					Node nodeEstancia = listEstancias.item(j);
+//                     Node sibling = node2.getNextSibling();
+//                     if(sibling==null) {
+//                		 break;
+//                	 }
+					if (nodeEstancia.getNodeType() == Node.ELEMENT_NODE) {
+						Element estancia = (Element) nodeEstancia;
+
+						String entradaNode = estancia.getElementsByTagName("entrada").item(0).getTextContent();
+						String salidaNode = estancia.getElementsByTagName("salida").item(0).getTextContent();
+
+						entrada = sdf.parse(entradaNode);
+						salida = sdf.parse(salidaNode);
+
+						Date[] estanciaDate = { entrada, salida };
+						// System.out.println(estancia[0] +" "+ estancia[1]);
+						// Node sibling = node.getNextSibling();
+
+						if (!encontrarEstancia(estanciaDate)) {
+							listaEstancias.put(estanciaDate, matricula);
+
+						}
+//                    	
+//                    	 NodeList estancias = doc.getElementsByTagName("estancias");
+//                        
+//                    	 Element element = (Element) estancias.item(temp);
+//                    	
+//                    	 NamedNodeMap map = element.getParentNode().getAttributes();
+//                    	//for (int j = 0; j < map.getLength(); j++) {
+//                    		 Node attribute = map.item(0);
+//                    		 if(attribute.getNodeValue().equals(nodeMatricula)) {
+//                    			 if(!encontrarEstancia(estancia, matricula) ) {
+//                    				 //matricula = Integer.parseInt(attribute.getNodeValue());
+//                    			 listaEstancias.put(estancia, matricula);               
+//                     }}
+					}
+				}
+
+			}
+		}
+		// System.out.println(listaEstancias.size());
+		for (Entry<Date[], Integer> a : listaEstancias.entrySet()) {
+			System.out.println(sdf.format(a.getKey()[0]) + " |||| " + sdf.format(a.getKey()[1]) + " ||| " + a.getValue());
+		}
+	}
+
+	// leerXML
+
+	public void crearElementos(Document doc) {
 		Element root = doc.createElement("Entradas-salidas");
 		doc.appendChild(root);
-		
+
 		for (Entry<Integer, Vehiculo> vehiculo : listaVehiculos.entrySet()) {
 			if (listaEstancias.containsValue(vehiculo.getKey())) {
 				Element coche = doc.createElement("Vehiculo");
@@ -218,78 +312,18 @@ public class Aparcamiento {
 				}
 			}
 		}
-	}//crearXML
-	public void readXML() throws ParseException, SAXException, IOException, ParserConfigurationException {
-		int matricula = 0;
-		Date entrada = null;
-		Date salida = null;
-		 
-	    File path = new File("Entradas-salidas.xml");
-			DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+	}// crearElementos
 
-			DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();			
-			Document doc = documentBuilder.parse(path);
-		 
-		    doc.getDocumentElement().normalize();
-		    
-		    //System.out.println("Root Element :" + doc.getDocumentElement().getNodeName());
-	         
-		    NodeList listVehiculos = doc.getElementsByTagName("Vehiculo");
-            
-         for (int temp = 0; temp < listVehiculos.getLength(); temp++) {
-
-             Node node = listVehiculos.item(temp);
-
-             if (node.getNodeType() == Node.ELEMENT_NODE) {
-
-                 Element vehiculo = (Element) node;
-
-                 String nodeMatricula = vehiculo.getAttribute("matricula");
-                 
-                 matricula = Integer.parseInt(nodeMatricula);
-                 
-                 Node n = vehiculo.getChildNodes().item(temp);
-                 if (n instanceof Element) {
-                   NodeList listEstancias = n.getChildNodes();
-
-                 for (int temp2 = 0; temp2 < listEstancias.getLength(); temp2++) {
-
-                     Node node2 = listEstancias.item(temp2);
-                     
-                     if (node2.getNodeType() == Node.ELEMENT_NODE) {
-
-                    	 Element estancia = (Element) node2;
-						// System.out.println(listEstancias.getLength());
-                    	 String entradaNode = estancia.getElementsByTagName("entrada").item(0).getTextContent();
-                    	 String salidaNode = estancia.getElementsByTagName("salida").item(0).getTextContent();
-                         
-                    	 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-                         entrada = sdf.parse(entradaNode);
-                         salida =  sdf.parse(salidaNode);
-                     }
-                     Date [] estancia = {entrada, salida};
-                     listaEstancias.put(estancia, matricula);
-                   }
-				 for(Entry<Date[], Integer> a : listaEstancias.entrySet()){
-					 System.out.println(a.toString());
-				 }
-
-             }}}
-
-	}//crearXML
-	public void recuperarFechajes() throws ParserConfigurationException, TransformerException, SAXException, IOException, ParseException {
-        File path = new File("Entradas-salidas.xml");
+	public void escribirFechajes()
+			throws ParserConfigurationException, TransformerException, SAXException, IOException, ParseException {
+		File path = new File("Entradas-salidas.xml");
 		DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-
 		DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-	
-		//Document doc = documentBuilder.parse(path);
-		//readXML(doc);
-
 		Document doc = documentBuilder.newDocument();
-        //llamar al método para crear un xml
-		crearXML(doc);
-		
+
+		// llamar al método para crear un xml
+		crearElementos(doc);
+
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource domSource = new DOMSource(doc);
@@ -297,6 +331,7 @@ public class Aparcamiento {
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		StreamResult streamResult = new StreamResult(path);
 		transformer.transform(domSource, streamResult);
-	}
+
+	}// escribirFechajes
 
 }
