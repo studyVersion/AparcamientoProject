@@ -133,12 +133,12 @@ public class Aparcamiento {
 
 	// si el código es 0 el vehículo ha sido añadido, si el código es -1 el vehículo
 	// ya existe.
-	public short darAltaResidente(int matricula) {
+	public short darAltaResidente(int matricula) throws ParserConfigurationException, TransformerException, SAXException, IOException, ParseException {
 		short codigo = 0;
 		if (!listaVehiculos.containsKey(matricula)) {
 			Residente vehiculo = new Residente(matricula);
 			listaVehiculos.put(matricula, vehiculo);
-			// escribirViculos
+			escribirFechajes();
 		} else {
 			codigo = -1;
 		}
@@ -221,69 +221,44 @@ public class Aparcamiento {
 			if (nodeVehiculo.getNodeType() == Node.ELEMENT_NODE) {
 
 				Element vehiculo = (Element) nodeVehiculo;
-                
 				String nodeMatricula = vehiculo.getAttribute("matricula");
-			
 				matricula = Integer.parseInt(nodeMatricula);
-				
-				
+				Vehiculo coche = new Vehiculo(matricula);
+				listaVehiculos.put(matricula,coche);
 				
 				NodeList estancias = doc.getElementsByTagName("estancias");
-                
-           	    Element element = (Element) estancias.item(i);
-           	    
-           	 if (element.getNodeType() == Node.ELEMENT_NODE) {
-   
-				Node  listEstancias = (Node) element.getChildNodes();
-				System.out.println(listEstancias.getChildNodes().getLength());
+				Element element = (Element) estancias.item(i);
 
-				for (int j = 0; j < listEstancias.getChildNodes().getLength(); j++) {
+				if (element.getNodeType() == Node.ELEMENT_NODE) {
+					Node listEstancias = (Node) element.getChildNodes();
+					for (int j = 0; j < listEstancias.getChildNodes().getLength(); j++) {
 
-					Node nodeEstancia = listEstancias.getChildNodes().item(j);
-//                     Node sibling = node2.getNextSibling();
-//                     if(sibling==null) {
-//                		 break;
-//                	 }
-					if (nodeEstancia.getNodeType() == Node.ELEMENT_NODE) {
-						Element estancia = (Element) nodeEstancia;
+						Node nodeEstancia = listEstancias.getChildNodes().item(j);
 
-						String entradaNode = estancia.getElementsByTagName("entrada").item(0).getTextContent();
-						String salidaNode = estancia.getElementsByTagName("salida").item(0).getTextContent();
+						if (nodeEstancia.getNodeType() == Node.ELEMENT_NODE) {
+							Element estancia = (Element) nodeEstancia;
 
-						entrada = sdf.parse(entradaNode);
-						salida = sdf.parse(salidaNode);
+							String entradaNode = estancia.getElementsByTagName("entrada").item(0).getTextContent();
+							String salidaNode = estancia.getElementsByTagName("salida").item(0).getTextContent();
 
-						Date[] estanciaDate = { entrada, salida };
-						// System.out.println(estancia[0] +" "+ estancia[1]);
-						// Node sibling = node.getNextSibling();
+							entrada = sdf.parse(entradaNode);
+							salida = sdf.parse(salidaNode);
 
-//						if (!encontrarEstancia(estanciaDate)) {
-							
-							 
-//	                    	
-//	                    	 NamedNodeMap map = element.getAttributes();
-//	                    	//for (int j = 0; j < map.getLength(); j++) {
-//	                    		 Node attribute = map.item(0);
-//	                    		 if(attribute.getNodeValue().equals(nodeMatricula)) {
-	                    			 if(!encontrarEstancia(estanciaDate) ) {
-	                    				 //matricula = Integer.parseInt(attribute.getNodeValue());
-	                    			 listaEstancias.put(estanciaDate, matricula);               
-	                    
-//	                    			 }
-							
-//							listaEstancias.put(estanciaDate, matricula);
+							Date[] estanciaDate = { entrada, salida };
+							if (!encontrarEstancia(estanciaDate)) {
 
+								listaEstancias.put(estanciaDate, matricula);
+
+							}                 	
 						}
-//                    	
-					}
 					}
 				}
-
 			}
 		}
-		// System.out.println(listaEstancias.size());
+
 		for (Entry<Date[], Integer> a : listaEstancias.entrySet()) {
-			System.out.println(sdf.format(a.getKey()[0]) + " |||| " + sdf.format(a.getKey()[1]) + " ||| " + a.getValue());
+			System.out
+					.println(sdf.format(a.getKey()[0]) + " |||| " + sdf.format(a.getKey()[1]) + " ||| " + a.getValue());
 		}
 	}
 

@@ -2,7 +2,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public abstract class Vehiculo {
+public  class Vehiculo {
 
 	protected int matricula;
 	protected Date entrada;
