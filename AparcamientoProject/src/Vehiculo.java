@@ -1,4 +1,5 @@
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public abstract class Vehiculo {
@@ -8,6 +9,8 @@ public abstract class Vehiculo {
 	protected Date salida;
 	protected  boolean aparcado;
 	protected Date[] estancia;
+	protected ArrayList<Estancia> estancias;
+	
 	
 	public Vehiculo(int matricula) {
 		this.matricula = matricula;
