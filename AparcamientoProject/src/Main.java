@@ -32,8 +32,7 @@ public class Main {
 		System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
 	}
 
-	public static void main(String[] args)
-			throws ParseException, IOException, ParserConfigurationException, TransformerException, SAXException {
+	public static void main(String[] args) throws Exception {
 
 		Aparcamiento parking = new Aparcamiento();
 		short option = 0;
@@ -44,7 +43,7 @@ public class Main {
 			menu();
 			try {
 				option = Short.parseShort(sc.nextLine());
-				
+
 				if (option == 1) {
 					System.out.println("Introduzca la matricula del coche que llega:");
 					matricula = Integer.parseInt(sc.nextLine());
@@ -98,7 +97,7 @@ public class Main {
 				}
 				if (option == 5) {
 					System.out.println(
-							"---------------------+----------------+-------------------+------------------+------------------------+-------------------------+\n"
+							          "---------------------+----------------+-------------------+------------------+------------------------+-------------------------+\n"
 									+ "      Matricula      |      Tipo      |  Tiempo Estancia  |   Tiempo Total   |         Entrada        |         Salida          |\n"
 									+ "---------------------+----------------+-------------------+------------------+------------------------+-------------------------+");
 					System.out.println(parking.comienzaMes());
@@ -106,7 +105,7 @@ public class Main {
 				if (option == 6) {
 					try (BufferedWriter bw = new BufferedWriter(
 							new FileWriter(new File("C:\\Users\\Administrateur\\Desktop\\output2.txt")))) {
-						bw.write("---------------------+---------------------------+----------------------+\n"
+						bw.write( "---------------------+---------------------------+----------------------+\n"
 								+ "      Matricula      | Tiempo estacionado (min.) |   Cantidad a pagar   |\n"
 								+ "---------------------+---------------------------+----------------------+\n"
 								+ parking.pagosResidentes());
@@ -116,16 +115,30 @@ public class Main {
 						System.out.println(ex.toString());
 					}
 					System.out.println("---------------------+---------------------------+----------------------+\n"
-							+ "      Matricula      | Tiempo estacionado (min.) |   Cantidad a pagar   |\n"
-							+ "---------------------+---------------------------+----------------------+");
+							         + "      Matricula      | Tiempo estacionado (min.) |   Cantidad a pagar   |\n"
+							         + "---------------------+---------------------------+----------------------+");
 					System.out.println(parking.pagosResidentes());
 				}
-				if(option == 9) {
-					parking.leerXML();
-				}
+
 				if (option == 7) {
-					parking.escribirFechajes();
+					mensajeConsola = parking.leerXmlDom();
+					
+					if (mensajeConsola < 0) {
+						System.out.println("Archivo xml no encontrado!");
+					}else {
+						System.out.println("El documento ha sido leído con éxito.");
+					}
 				}
+				if (option == 8) {
+					mensajeConsola = parking.leerXmlSax();
+					
+					if (mensajeConsola < 0) {
+						System.out.println("Archivo xml no encontrado!");
+					}else {
+						System.out.println("El documento ha sido leído con éxito.");
+					}
+				}
+				
 			} catch (NumberFormatException e) {
 				System.out.println(e);
 			}

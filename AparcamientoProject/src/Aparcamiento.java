@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -58,7 +60,7 @@ public class Aparcamiento {
 	 * encontrado la matrícula entonces no residente, si el código es 2, el vehículo
 	 * está aparcado.
 	 */
-	public short registrarEntrada(int matricula) throws ParseException {
+	public short registrarEntrada(int matricula) throws Exception {
 		short codigo = 0;
 		Vehiculo coche = encontrarVehiculo(matricula);
 		if (coche == null) {
@@ -73,12 +75,13 @@ public class Aparcamiento {
 		} else {
 			coche.setEntrada(new Date());
 			coche.setAparcado(true);
+			escribirFechajes();
 		}
 		return codigo;
 
 	}// registrarEntrada
 
-	public short registrarSalida(int matricula) {
+	public short registrarSalida(int matricula) throws Exception {
 		short codigo = 0;
 		Vehiculo coche = encontrarVehiculo(matricula);
 
@@ -92,10 +95,14 @@ public class Aparcamiento {
 			coche.setEstancia(coche.getEntrada(), coche.getSalida());
 			Date[] estancia = { coche.getEntrada(), coche.getSalida() };
 			listaEstancias.put(estancia, matricula);
-
+			
+			if (coche instanceof Oficial) {
+				escribirFechajes();
+			}
 			if (coche instanceof Residente) {
 				Residente residente = (Residente) coche;
 				residente.sumaDuracionEstancia();
+				escribirFechajes();
 			} else if (coche instanceof NoResidente) {
 				NoResidente noResidente = (NoResidente) coche;
 				noResidente.calcularImporte(noResidente.getEstancia());
@@ -118,11 +125,12 @@ public class Aparcamiento {
 
 	// si el código es 0 el vehículo ha sido añadido, si el código es -1 el vehículo
 	// ya existe.
-	public short darAltaOficial(int matricula) {
+	public short darAltaOficial(int matricula) throws Exception {
 		short codigo = 0;
 		if (!listaVehiculos.containsKey(matricula)) {
 			Oficial vehiculo = new Oficial(matricula);
 			listaVehiculos.put(matricula, vehiculo);
+			escribirVehiculos();
 		} else {
 			codigo = -1;
 		}
@@ -133,12 +141,12 @@ public class Aparcamiento {
 
 	// si el código es 0 el vehículo ha sido añadido, si el código es -1 el vehículo
 	// ya existe.
-	public short darAltaResidente(int matricula) throws ParserConfigurationException, TransformerException, SAXException, IOException, ParseException {
+	public short darAltaResidente(int matricula) throws Exception {
 		short codigo = 0;
 		if (!listaVehiculos.containsKey(matricula)) {
 			Residente vehiculo = new Residente(matricula);
 			listaVehiculos.put(matricula, vehiculo);
-			escribirFechajes();
+			escribirVehiculos();
 		} else {
 			codigo = -1;
 		}
@@ -187,95 +195,148 @@ public class Aparcamiento {
 	public boolean encontrarEstancia(Date[] estancia) {
 		boolean existe = false;
 		for (Entry<Date[], Integer> estancias : listaEstancias.entrySet()) {
-
 			if (estancia[0].equals(estancias.getKey()[0]) && estancia[1].equals(estancias.getKey()[1])) {
 				// if(estancias.getValue().equals(mat)) {
 				existe = true;
 			}
-			// }
-
 		}
 		return existe;
-
 	}
 
-	public void leerXML() throws ParseException, SAXException, IOException, ParserConfigurationException {
+	public short leerXmlSax() {
+		SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+		File fichero = new File("Vehiculos.xml");
+		short gestionErrores = 0;
+		if (fichero.exists()) {
+			try {
+				SAXParser saxParser = saxParserFactory.newSAXParser();
+				HandlerSax handler = new HandlerSax();
+				saxParser.parse(fichero, handler);
+				// Get Employees list
+				listaVehiculos = handler.getEmpList();
+//	        //print employee information
+//	        
+//	        List<Vehiculo> result = handler.getResult();
+				// System.out.println(aa.size());
+				//System.out.println(listaVehiculos.size());
+//			for (Entry<Integer, Vehiculo> vehiculo : listaVehiculos.entrySet()) {
+//
+//				System.out.println(vehiculo);
+//
+//			}
 
+			} catch (ParserConfigurationException | SAXException | IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			gestionErrores = -1;
+		}
+		return gestionErrores;
+	}
+
+	public short leerXmlDom() throws Exception {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-		File path = new File("C:\\Users\\2DAM\\git\\AparcamientoProject\\AparcamientoProject\\Entradas-salidas.xml");
+		File ficheroXML = new File("Entradas-salidas.xml");
 		int matricula = 0;
+		short gestionErrores = 0;
 		Date entrada = null;
 		Date salida = null;
 
 		DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-		Document doc = documentBuilder.parse(path);
+		Document doc = documentBuilder.parse(ficheroXML);
 		doc.getDocumentElement().normalize();
 
 		NodeList listVehiculos = doc.getElementsByTagName("Vehiculo");
+		if (ficheroXML.exists()) {
+			for (int i = 0; i < listVehiculos.getLength(); i++) {
 
-		for (int i = 0; i < listVehiculos.getLength(); i++) {
+				Node nodeVehiculo = listVehiculos.item(i);
 
-			Node nodeVehiculo = listVehiculos.item(i);
+				if (nodeVehiculo.getNodeType() == Node.ELEMENT_NODE) {
 
-			if (nodeVehiculo.getNodeType() == Node.ELEMENT_NODE) {
+					Element vehiculo = (Element) nodeVehiculo;
+					String nodeMatricula = vehiculo.getAttribute("matricula");
+					matricula = Integer.parseInt(nodeMatricula);
+//					Vehiculo coche = new Vehiculo(matricula);
+//					listaVehiculos.put(matricula, coche);
 
-				Element vehiculo = (Element) nodeVehiculo;
-				String nodeMatricula = vehiculo.getAttribute("matricula");
-				matricula = Integer.parseInt(nodeMatricula);
-				Vehiculo coche = new Vehiculo(matricula);
-				listaVehiculos.put(matricula,coche);
-				
-				NodeList estancias = doc.getElementsByTagName("estancias");
-				Element element = (Element) estancias.item(i);
+					NodeList estancias = doc.getElementsByTagName("estancias");
+					Element element = (Element) estancias.item(i);
 
-				if (element.getNodeType() == Node.ELEMENT_NODE) {
-					Node listEstancias = (Node) element.getChildNodes();
-					for (int j = 0; j < listEstancias.getChildNodes().getLength(); j++) {
+					if (element.getNodeType() == Node.ELEMENT_NODE) {
+						Node listEstancias = (Node) element.getChildNodes();
+						for (int j = 0; j < listEstancias.getChildNodes().getLength(); j++) {
 
-						Node nodeEstancia = listEstancias.getChildNodes().item(j);
+							Node nodeEstancia = listEstancias.getChildNodes().item(j);
 
-						if (nodeEstancia.getNodeType() == Node.ELEMENT_NODE) {
-							Element estancia = (Element) nodeEstancia;
+							if (nodeEstancia.getNodeType() == Node.ELEMENT_NODE) {
+								Element estancia = (Element) nodeEstancia;
 
-							String entradaNode = estancia.getElementsByTagName("entrada").item(0).getTextContent();
-							String salidaNode = estancia.getElementsByTagName("salida").item(0).getTextContent();
+								String entradaNode = estancia.getElementsByTagName("entrada").item(0).getTextContent();
+								String salidaNode = estancia.getElementsByTagName("salida").item(0).getTextContent();
 
-							entrada = sdf.parse(entradaNode);
-							salida = sdf.parse(salidaNode);
+								entrada = sdf.parse(entradaNode);
+								salida = sdf.parse(salidaNode);
 
-							Date[] estanciaDate = { entrada, salida };
-							if (!encontrarEstancia(estanciaDate)) {
-
-								listaEstancias.put(estanciaDate, matricula);
-
-							}                 	
+								Date[] estanciaDate = { entrada, salida };
+								if (!encontrarEstancia(estanciaDate)) {
+									listaEstancias.put(estanciaDate, matricula);
+								}
+							}
 						}
 					}
 				}
 			}
+		} else {
+			gestionErrores = -1;
 		}
+		return gestionErrores;
 
-		for (Entry<Date[], Integer> a : listaEstancias.entrySet()) {
-			System.out
-					.println(sdf.format(a.getKey()[0]) + " |||| " + sdf.format(a.getKey()[1]) + " ||| " + a.getValue());
+//		for (Entry<Date[], Integer> a : listaEstancias.entrySet()) {
+//			System.out
+//					.println(sdf.format(a.getKey()[0]) + " |||| " + sdf.format(a.getKey()[1]) + " ||| " + a.getValue());
+//		}
+	}// leerXML
+
+	// crear los elementos de los vehículos para implementarlos en el escritor xml
+	public void elementosVehiculos(Document doc) {
+		Element root = doc.createElement("Vehiculos");
+		doc.appendChild(root);
+		//System.out.println(listaVehiculos.size());
+		for (Entry<Integer, Vehiculo> vehiculo : listaVehiculos.entrySet()) {
+			// System.out.println("HOLA");
+			Vehiculo coche = encontrarVehiculo(vehiculo.getKey());
+			if (coche instanceof Oficial) {
+				// System.out.println("HOLA");
+				Element oficial = doc.createElement("vehiculo_oficial");
+				root.appendChild(oficial);
+				Element matricula = doc.createElement("matricula");
+				matricula.setTextContent(vehiculo.getKey().toString());
+				oficial.appendChild(matricula);
+
+			} else if (coche instanceof Residente) {
+				Element residente = doc.createElement("vehiculo_residente");
+				root.appendChild(residente);
+				Element matricula = doc.createElement("matricula");
+				matricula.setTextContent(vehiculo.getKey().toString());
+				residente.appendChild(matricula);
+			}
 		}
 	}
 
-	// leerXML
-
-	public void crearElementos(Document doc) {
+	// crear los elementos de los fechajes para implementarlos en el escritor xml
+	public void elementosFechajes(Document doc) {
 		Element root = doc.createElement("Entradas-salidas");
 		doc.appendChild(root);
 
 		for (Entry<Integer, Vehiculo> vehiculo : listaVehiculos.entrySet()) {
 			if (listaEstancias.containsValue(vehiculo.getKey())) {
 				Element coche = doc.createElement("Vehiculo");
-				// add coche to root
+				// añadir coche to root
 				root.appendChild(coche);
-				// add matricula attribute
+				// añadir matricula attribute
 				coche.setAttribute("matricula", vehiculo.getKey().toString());
-
 				Element estancias = doc.createElement("estancias");
 				coche.appendChild(estancias);
 				for (Entry<Date[], Integer> estancia : listaEstancias.entrySet()) {
@@ -284,12 +345,10 @@ public class Aparcamiento {
 						// estancia
 						Element estanciaElement = doc.createElement("estancia");
 						estancias.appendChild(estanciaElement);
-
 						// entrada
 						Element entrada = doc.createElement("entrada");
 						entrada.setTextContent(sdf.format(estancia.getKey()[0]));
 						estanciaElement.appendChild(entrada);
-
 						// salida
 						Element salida = doc.createElement("salida");
 						salida.setTextContent(sdf.format(estancia.getKey()[1]));
@@ -300,15 +359,34 @@ public class Aparcamiento {
 		}
 	}// crearElementos
 
-	public void escribirFechajes()
-			throws ParserConfigurationException, TransformerException, SAXException, IOException, ParseException {
-		File path = new File("C:\\Users\\2DAM\\git\\AparcamientoProject\\AparcamientoProject\\Entradas-salidas.xml");
+	public void escribirFechajes() throws Exception {
+		File path = new File("Entradas-salidas.xml");
 		DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
 		Document doc = documentBuilder.newDocument();
 
-		// llamar al método para crear un xml
-		crearElementos(doc);
+		// llamar al método de los elementos para crear el xml
+		elementosFechajes(doc);
+		// llamar al método para escribir el xml
+		escribirXLM(doc, path);
+
+	}// escribirFechajes
+
+	public void escribirVehiculos() throws Exception {
+		File path = new File("Vehiculos.xml");
+		DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+		Document doc = documentBuilder.newDocument();
+
+		// llamar al método de los elementos para crear el xml
+		elementosVehiculos(doc);
+
+		// llamar al método para escribir el xml
+		escribirXLM(doc, path);
+
+	}// escribirFechajes
+
+	public void escribirXLM(Document doc, File path) throws Exception {
 
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
@@ -316,8 +394,7 @@ public class Aparcamiento {
 		transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		StreamResult streamResult = new StreamResult(path);
+
 		transformer.transform(domSource, streamResult);
-
-	}// escribirFechajes
-
+	}
 }

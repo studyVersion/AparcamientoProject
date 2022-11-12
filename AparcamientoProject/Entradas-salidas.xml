@@ -1,42 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <Entradas-salidas>
-    <Vehiculo matricula="1234">
-        <estancias>
-            <estancia>
-                <entrada>11-11-2022 17:05:01</entrada>
-                <salida>11-11-2022 17:05:03</salida>
-            </estancia>
-        </estancias>
-    </Vehiculo>
     <Vehiculo matricula="123">
         <estancias>
             <estancia>
-                <entrada>10-11-2022 22:07:53</entrada>
-                <salida>10-11-2022 22:07:54</salida>
-            </estancia>
-            <estancia>
-                <entrada>11-11-2022 16:54:19</entrada>
-                <salida>11-11-2022 16:54:29</salida>
-            </estancia>
-            <estancia>
-                <entrada>10-11-2022 22:07:55</entrada>
-                <salida>10-11-2022 22:07:56</salida>
+                <entrada>12-11-2022 22:13:16</entrada>
+                <salida>12-11-2022 22:13:18</salida>
             </estancia>
         </estancias>
     </Vehiculo>
-    <Vehiculo matricula="444">
+    <Vehiculo matricula="222">
         <estancias>
             <estancia>
-                <entrada>11-11-2022 17:03:38</entrada>
-                <salida>11-11-2022 17:03:46</salida>
+                <entrada>12-11-2022 22:13:45</entrada>
+                <salida>12-11-2022 22:13:50</salida>
             </estancia>
         </estancias>
     </Vehiculo>
     <Vehiculo matricula="111">
         <estancias>
             <estancia>
-                <entrada>10-11-2022 22:07:58</entrada>
-                <salida>10-11-2022 22:07:59</salida>
+                <entrada>12-11-2022 22:13:09</entrada>
+                <salida>12-11-2022 22:13:11</salida>
+            </estancia>
+            <estancia>
+                <entrada>12-11-2022 22:13:13</entrada>
+                <salida>12-11-2022 22:13:14</salida>
             </estancia>
         </estancias>
     </Vehiculo>
