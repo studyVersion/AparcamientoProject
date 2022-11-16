@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Vehiculos>
+    <vehiculo_oficial>
+        <matricula>123</matricula>
+    </vehiculo_oficial>
+    <vehiculo_oficial>
+        <matricula>222</matricula>
+    </vehiculo_oficial>
+    <vehiculo_residente>
+        <matricula>111</matricula>
+    </vehiculo_residente>
+</Vehiculos>
